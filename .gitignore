@@ -1,0 +1,7 @@
+/deploy
+node_modules
+yarn-error.log
+shopify.theme.toml
+**/.DS_Store
+
+.shopify

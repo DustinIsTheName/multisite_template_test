@@ -1,0 +1,86 @@
+name: Merge develop code and deploy to Production Theme
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    name: Deploy to Production & Staging - Latest Code Deployment Themes
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install Shopify CLI
+      run: npm install -g @shopify/cli
+
+    - name: Create deploy directory if it doesn't exist
+      run: mkdir -p deploy
+
+    - name: Pull Production Theme
+      run: |
+        shopify theme pull \
+          --theme ID \
+          --store "production-store" \
+          --password shptka_aaaaaaaaa \
+          --path "./deploy"
+
+    # -- @cqlcorp Search Tool --
+
+    # - name: Use Authenticate with private NPM package - @cqlcorp
+    #   run: echo “\n //npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
+
+    # - name: Use when @cqlcorp NPM packages are checked into the repository
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Search Tool
+      run: npm run build
+
+    # -- END @cqlcorp Search Tool --
+    
+    - name: Copy production code into theme deploy directory
+      run: |
+        cp -r sites/THEME/. deploy/
+
+    - name: Upload Production Theme
+      run: |
+        shopify theme push \
+          --json \
+          --theme 174824587286 \
+          --store "production-store" \
+          --password shptka_aaaaaaaaa \
+          --path "./deploy" \
+          --allow-live
+
+    - name: Pull Staging Theme
+      run: |
+        shopify theme pull \
+          --theme ID \
+          --store "stg-store" \
+          --password shptka_aaaaaaaaa \
+          --path "./deploy"
+
+    - name: Copy staging code into theme deploy directory
+      run: |
+        cp -r sites/THEME/. deploy/
+        cp -r sites/THEME-STG/. deploy/
+
+    - name: Upload Staging Theme
+      run: |
+        shopify theme push \
+          --json \
+          --theme ID \
+          --store "stg-store" \
+          --password shptka_aaaaaaaaa \
+          --path "./deploy" \
+          --allow-live
+
+    - name: Remove deploy directory after deploying files
+      run: rm -rf deploy

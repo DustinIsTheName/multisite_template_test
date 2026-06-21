@@ -1,0 +1,112 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "Footer Group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "text": {
+          "type": "text",
+          "settings": {}
+        },
+        "link-list-1": {
+          "type": "link_list",
+          "settings": {}
+        },
+        "link-list-2": {
+          "type": "link_list",
+          "settings": {}
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "text",
+        "link-list-1",
+        "link-list-2",
+        "newsletter"
+      ],
+      "settings": {
+        "show_back_to_top": false,
+        "show_payment_icons": true,
+        "show_powered_by": true,
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "bg_color": "#141414",
+        "text_color": "#ffffff"
+      }
+    },
+    "icons-with-text": {
+      "type": "icons-with-text",
+      "blocks": {
+        "icons-with-text-1": {
+          "type": "item",
+          "settings": {
+            "icon": "chat_bubble",
+            "heading": "Visit our support center",
+            "text": "<p>Expert help & advice</p>"
+          }
+        },
+        "icons-with-text-2": {
+          "type": "item",
+          "settings": {
+            "icon": "box",
+            "heading": "Check your order status",
+            "text": "<p>Updates & tracking</p>"
+          }
+        },
+        "icons-with-text-3": {
+          "type": "item",
+          "settings": {
+            "icon": "return",
+            "heading": "Returns & exchanges",
+            "text": "<p>All you need to know</p>"
+          }
+        },
+        "icons-with-text-4": {
+          "type": "item",
+          "settings": {
+            "icon": "dollar_sign",
+            "heading": "Price-match guarantee",
+            "text": "<p>Our promise to you</p>"
+          }
+        }
+      },
+      "block_order": [
+        "icons-with-text-1",
+        "icons-with-text-2",
+        "icons-with-text-3",
+        "icons-with-text-4"
+      ],
+      "settings": {
+        "heading": "",
+        "heading_align": "text-start",
+        "icon_size": 36,
+        "title_type_scale": "medium",
+        "text_type_scale": "medium",
+        "icon_position": "beside",
+        "mobile_stack": false,
+        "section_height": "medium",
+        "color_scheme": "3",
+        "full_width": true,
+        "dividers": "none",
+        "prevent_animation": false
+      }
+    }
+  },
+  "order": [
+    "icons-with-text",
+    "footer"
+  ]
+}

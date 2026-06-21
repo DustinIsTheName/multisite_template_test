@@ -1,0 +1,29 @@
+{
+  "name": "shopify-propel",
+  "version": "2.0.0",
+  "description": "Section > Block based architecture to be layered on existing themes.",
+  "author": "CQL Corp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "task": "node scripts/task.js",
+    "push": "node scripts/task.js push",
+    "pull": "node scripts/task.js pull",
+    "dev": "node scripts/task.js dev",
+    "pushj": "node scripts/task.js pushj",
+    "pullj": "node scripts/task.js pullj",
+    "prop": "node scripts/propagate-json.js",
+    "new-site": "node scripts/new-site.js"
+  },
+  "devDependencies": {
+    "@csstools/postcss-minify": "^2.0.4",
+    "chalk": "^4.1.0",
+    "fs-extra": "^9.0.1",
+    "postcss": "^8.5.6",
+    "watchpack": "^2.1.0",
+    "yargs": "^16.2.0"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3"
+  }
+}
