@@ -13,7 +13,6 @@ const debug = (msg, ...rest) => console.error(chalk.debug(msg), ...rest)
 // Extendable List of Sites
 // ==================================================
 const siteTruth = {
-  "test": "testing",
 };
 const sites = Object.keys(siteTruth);
 
