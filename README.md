@@ -17,8 +17,9 @@ This template is for setting up an environment to support multiple Shopify store
   - [pushj](#pushj)
   - [dev](#dev)
   - [copy](#copy)
+- [Recommended Branching Strategy](#recommended-branching-strategy)
 - [Extending](#extending)
-  - [Example: Seasonal Promotion Theme](#example-seasonal-promotion-theme)
+  - [Example Extension: Seasonal Promotion Theme](#example-extension-seasonal-promotion-theme)
 
 ## Tooling
 
