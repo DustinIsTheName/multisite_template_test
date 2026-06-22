@@ -41,6 +41,12 @@ function copyDirectory(source, destination) {
     try {
         // Ensure destination directory exists
         ensureDirectoryExists(destination);
+        
+        // Also Ensure _shared directory exists
+        if (direction === 'pull') {
+            const mainDestination = path.join(destination.replace(siteThemeDir, mainThemeDir));
+            ensureDirectoryExists(mainDestination);
+        }
 
         // Read all items in source directory
         const items = fs.readdirSync(source);
