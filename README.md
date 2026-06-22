@@ -548,6 +548,8 @@ A subset of stores need a temporary theme for an upcoming "International Colors 
 ###### Blue Fish Configurations
 ################################################
 
+...
+
 [environments.blue_holi]
 
 ...
