@@ -1,6 +1,24 @@
-# Monkey Sports
+# CQL Shopify Multi-site setup
 
-The Shopify Sleek template has been customized by CQL to enhance user experience and provide a modern, responsive design. This template is designed to cater to various e-commerce needs, ensuring a seamless shopping experience for customers.
+This template is for setting up an environment to support multiple Shopify stores sharing one repo. It is made with a focus on the stores sharing code and only differing in regards to the theme customizer (.json files in the repo), but is intended to be flexable and extendable for your needs.
+
+# Table of Contents
+
+- [Tooling](#tooling)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+  - [scripts/utils.js](#scriptsutilsjs)
+  - [shopify.theme.toml](#shopifythemetoml)
+- [Commands](#commands)
+  - [new-site](#new-site)
+  - [pull](#pull)
+  - [push](#push)
+  - [pullj](#pullj)
+  - [pushj](#pushj)
+  - [dev](#dev)
+  - [copy](#copy)
+- [Extending](#extending)
+  - [Example: Seasonal Promotion Theme](#example-seasonal-promotion-theme)
 
 ## Tooling
 
@@ -9,116 +27,557 @@ The Shopify Sleek template has been customized by CQL to enhance user experience
 - Node 24.x
 - Yarn (or npm)
 - [Shopify CLI](https://shopify.dev/docs/api/shopify-cli)
-- Base Theme: [Enterprise](https://themes.shopify.com/themes/enterprise/presets/enterprise)
-- Search: Fast Simon - App
 
-## Setup Steps
+## Quick Start
+This gets you up and running for one Shopify Store
+
+1. Remove git instance
+    ```
+    rm -rf .git
+    ```
+
+2. Install dependencies:
+   ```bash
+   yarn install
+   ```
+
+3. Create a new site configuration:
+   ```bash
+   yarn new-site <site-key> <store-directory>
+   ```
+   * `<site-key>`: A short identifier for the store (for example: `main`, `ca`, `outlet`).
+   * `<store-directory>`: The directory name used for the site's theme files.
+
+4. Create your local theme configuration:
+   ```bash
+   cp shopify.theme.template.toml shopify.theme.toml
+   ```
+
+5. Update `shopify.theme.toml` with your store's details for the environment ending in `_dev`.
+
+6. Pull the theme:
+   ```bash
+   yarn pull <site-key>
+   ```
+
+## Configuration
+  The configuration is organized around three concepts: sites, environments, and groups.
+
+- **Sites** represent individual storefronts.
+- **Environments** represent deployment targets for a site.
+    - This template starts with 3 pre-configured envrionments:
+        - Productuction (prd)
+        - Staging (stg)
+        - Development (dev)
+- **Groups** are named collections of sites.
+    - This template starts with 1 pre-configured group:
+        - All; automatically pulls in all configured sites.
+
+### scripts/utils.js
+The primary configuration lives in `scripts/utils.js` and defines the three core structures: sites, environments, and groups.
+
+`siteTruth` is populated when you create a site using `yarn new-site`.
+
+It maps site keys to their directory names.
+```js
+const siteTruth = {
+  // Populated by `yarn new-site`
+  // Format:
+  // "<site-key>": "<store-directory>"
+};
+```
+
+`envs` is used by `yarn new-site` to determine which environments to generate for `shopify.theme.toml`
+```js
+const envs = [
+  // Used by `yarn new-site`
+  "dev",
+  "stg",
+  "prd",
+];
+```
+
+`groups` defines named collections of sites used to execute commands across multiple sites.
+```js
+const groups = {
+  "all": sites,
+  // Format:
+  // "<group-name>": ["<site-key>", ...]
+}
+```
+
+### shopify.theme.toml
+
+#### <u>Overview</u>
+This file defines per site-environment pair configuration used by the tooling.
+
+A template version (`shopify.theme.template.toml`) is committed to the repository as an example, while the actual `shopify.theme.toml` file is ignored
+
+[Shopify Theme Command Reference](https://shopify.dev/docs/api/shopify-cli/theme)
 
 
-## Deploy Commands
+#### <u>Structure</u>
 
-Deploy commands follow a structure of `yarn <command> <site> <environment>`
+The file is divided into environment blocks, each representing a site and environment (typically a theme) combination.
 
-### commands
+#### <u>Naming Convention</u>
 
-- `push` => Uploads your local theme files to Shopify
-- `pull` => Retrieves theme files from Shopify
-- `dev` => upload changes to your theme in real time
+Each environment follows the naming convention: 
 
-### sites
+`[environments.\<site-key\>_\<env\>]`
 
-- `main` => Monkey Sports Main; directory: `sites/main`
-- `hockus` => Hockey Monkey US; directory: `sites/hockey_us`
-- `hockca` => Hockey Monkey CA; directory: `sites/hockey_ca`
-- `base` => Baseball Monkey; directory: `sites/baseball`
-- `goal` => Goalie Monkey; directory: `sites/goalie`
-- `lac` => Lacrosse Monkey; directory: `sites/lacrosse`
-- `all` => Target all 6 sites simultaneously;
+#### <u>Fields</u>
+- `theme = "<TBD>"`<br>
+  Theme identifier for the environment.
 
-### environment (optional)
+- `store-password = ""`<br>
+  Storefront password. Can be provided via `yarn new-site`.
 
-- `prd` (deploy to the production theme)
-- `stg` (deploy to the staging theme)
-- `dev` (deploy to your development theme; this is the default if you leave it blank)
+- `store = ""`<br>
+  Store identifier. Can be provided via `yarn new-site`.
 
-### examples
+- `path = "./deploy/testing"`<br>
+  Generated by `yarn new-site`.
 
-- `yarn push main` would deploy to your dev theme on the Monkey Sports Main store
-- `yarn pull base stg` would pull the site data from the Staging theme on the Baseball Monkey store
-- `yarn push hockca prd` would deploy to the Staging theme on the Hockey Monkey CA store
-- `yarn dev goal` would watch for local file changes and deploy to your dev theme on the Goalie Monkey Store
-- `yarn push all stg` => Would deploy to the Staging theme on all 6 stores
+- `output = "json"`<br>
+  Static.
 
-## Setting up a new store
+- `force = true`<br>
+  Static.
 
-1. Run the new-site command
+- `port = 9292`<br>
+  Generated by `yarn new-site`.
 
-- Example Format: `yarn new-site site_key site_directory store=myshopify_url password=seawok name="Monkeying Around"`
-  - `site_key` and `site_directory` are mandatory and need no prefixes.
-    - `site_key` is the shorthand for the site. Whatever you enter here will be what you use for the `<site>` in all Deploy Commands
-    - `site_directory` will be the name of the directory for the store within `sites/`
-  - `store`, `password`, and `name` are all optional and require the prefix as formatted above
-    - `store` is the myshopify URL for your store
-    - `password` is the storefront password for your store if it still has password protection
-    - `name` is a generic Display Name for your store. Nothing functional relies on it
 
-2. `shopify.theme.template.toml` will now have 3 new environments for your store. Fill in any detials for the optional variables that were not filled in prior. Copy them to your `shopify.theme.toml` proper and fill in your theme ids from the themes you are using for Production, Staging, and your personal Dev as applicable.
+# Commands
 
-## Branching Strategy
+The CLI commands are defined in `package.json` and used to manage site configuration and sync data between the local codebase and Shopify.
 
-- Default Branch: `main`
-- Feature Ticket: `feature/*Project_Code*-*Ticket_Number*`
-- Bug Ticket: `bugfix/*Project_Code*-*Ticket_Number*`
+## new-site
 
-## Developer Initial Setup
+Generate config for a new Shopify Store in this codebase
 
-1. Go into all Client Stores and duplicate each published theme. Rename duplicated themes to `Dev - __NAME__`
-2. Update `shopify.theme.template.toml` file to have entries for each theme created and update theme IDs
-3. In the client stores, open the `Theme Access` app and request passwords for each store. Copy those passwords into your `.toml`
+### Usage
 
-### Special Install Instructions
+```bash
+yarn new-site <site-key> <site-directory> [options]
+```
 
-No known special considerations at the time
+### Arguments
+- `<site-key>`: A short identifier for the store (for example: `main`, `ca`, `outlet`).
+- `<store-directory>`: The directory name used for the site's theme files.
 
-### Troubleshooting
+### Options
+- `password=<value>`: Storefront password used in `shopify.theme.template.toml`
+- `store=<value>`: Shopify store URL used in `shopify.theme.template.toml`
+- `name=<value>`: Readable name used to mark the site’s environments in `shopify.theme.template.toml`.
 
-No known install issues.
+### Example
+```bash
+yarn new-site test my_test_store name="My Test Store" store=my_test_store.myshopify.com password=zeegep
+```
 
-## Developer Workflow
+### Behavior
+- Creates the site directory in `/sites` and `/deploy`
+- Adds an entry to `siteTruth` in `scripts/utils.js`
+- Appends environment variables to `shopify.theme.template.toml`
 
-1. The developer will duplicate the **Latest Code** theme in a store they decide to work in. The theme name should include the Jira ticket number. Example: **CQLJIRA-12 Footer**.
+## push
 
-2. The developer updates the store environment theme variable with the correct Theme ID for their theme.
+Upload theme files to Shopify
 
-3. The developer creates a branch from `main` using the Jira ticket number. Example: `CQLJIRA-12-footer`.
+### Usage
 
-4. The developer then pulls the Shopify code down to their local environment. Example: `shopify theme pull --environment store-one`
+```bash
+yarn push <site-key|group> [<env>]
+```
 
-5. After the work is completed open a pull request against the `main` branch. **Discard all JSON files** before opening the pull request. Make sure the correct Jira ticket number, theme name, and theme preview ID are included in the pull request.
+### Arguments
+- `<site-key>`: Targets a single site
+- `<group>`: Targets all sites within the group
+- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
 
-6. In the Jira ticket add a comment that includes the URL to pull request **and** theme preview.
-   - **Content/Settings (JSON):** List any JSON files that were updated or are required for this work.
-     - _Example:_ `sections/footer-group.json` or _Toggle pre-footer checkbox in Footer section_.
-   - **Testing Instructions:** Add helpful information on how and where to test this specific feature.
+### Example
+```bash
+yarn push test stg
+```
+Uploads to the stg theme on the test store.
 
-7. Mark Jira ticket as ready for code review and assign a reviewer.
+```bash
+yarn push example dev
+```
+Uploads to the dev theme on the example store.
 
-> After the pull request has been merged, _if_ JSON updates are needed they should be added to the **Latest Code** theme. There are three ways to do this.
->
-> - In Shopify, go to the theme customizer and update it (small changes).
-> - In Shopify, go to Edit code in the Dev theme and copy the json file and paste/create it in the Latest Code theme (small to large).
-> - In Git, commit and push the JSON file to the correct stores branch (medium to large).
->
-> This needs to be done before the Jira ticket is passed to QA.
+### Behavior
+- Resolves `<site-key|group>`:
+  - If `<site-key>`, resolves to a single site
+  - If `<group>`, resolves to all sites in that group
 
-## Deployment Process (Tech Lead Only)
+- Resolves environment:
+  - Uses `[<env>]` if provided
+  - Otherwise defaults to `dev`
 
-1. `shopify theme pull --theme main`
-2. Commit client theme changes to `main`
-3. Merge all PRs to `main` and fetch
-4. Duplicate/Backup all themes affected by the deployment
-5. `shopify theme push --theme main`
+- For each resolved site:
+  - Determines the target theme from `shopify.theme.toml`
+  - Builds the deployment file set using the following precedence rules:
+    - Files from `sites/<site_dir>` override files from `sites/_shared`
+    - Only the final merged file set is deployed
+  - Executes upload via Shopify CLI
 
-### Special Deployment Instructions
+## pull
 
-No known special considerations at the time
+Download theme files from Shopify
+
+### Usage
+
+```bash
+yarn pull <site-key|group> [<env>]
+```
+
+### Arguments
+- `<site-key>`: Targets a single site
+- `<group>`: Targets all sites within the group
+- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
+
+### Example
+```bash
+yarn pull test dev
+```
+Downloads from the dev theme on the test store.
+
+```bash
+yarn pull example prd
+```
+Downloads from the prd theme on the example store.
+
+### Behavior
+- Resolves `<site-key|group>`:
+  - If `<site-key>`, resolves to a single site
+  - If `<group>`, resolves to all sites in that group
+
+- Resolves environment:
+  - Uses `[<env>]` if provided
+  - Otherwise defaults to `dev`
+
+- For each resolved site:
+  - Determines the target theme from `shopify.theme.toml`
+  - Executes download via Shopify CLI
+  - Routes downloaded files per site using the following rules:
+    - If a file already exists in `sites/<site_dir>`, it is overwritten there
+    - `.json` files are always written to `sites/<site_dir>`
+    - All remaining files are written to `sites/_shared`
+
+## pushj
+
+Upload `.json` files to Shopify
+
+### Usage
+
+```bash
+yarn pushj <site-key|group> [<env>]
+```
+
+### Arguments
+- `<site-key>`: Targets a single site
+- `<group>`: Targets all sites within the group
+- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
+
+### Example
+```bash
+yarn pushj test stg
+```
+Uploads `.json` files to the stg theme on the test store.
+
+```bash
+yarn pushj example dev
+```
+Uploads `.json` files to the dev theme on the example store.
+
+### Behavior
+- Resolves `<site-key|group>`:
+  - If `<site-key>`, resolves to a single site
+  - If `<group>`, resolves to all sites in that group
+
+- Resolves environment:
+  - Uses `[<env>]` if provided
+  - Otherwise defaults to `dev`
+
+- For each resolved site:
+  - Determines the target theme from `shopify.theme.toml`
+  - Builds the deployment file set by copying only `.json` files from `sites/<site_dir>`:
+  - Executes `.json` only upload via Shopify CLI
+
+## pullj
+
+Download `.json` files from Shopify
+
+### Usage
+
+```bash
+yarn pullj <site-key|group> [<env>]
+```
+
+### Arguments
+- `<site-key>`: Targets a single site
+- `<group>`: Targets all sites within the group
+- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
+
+### Example
+```bash
+yarn pullj test dev
+```
+Downloads `.json` files from the dev theme on the test store.
+
+```bash
+yarn pullj example prd
+```
+Downloads `.json` files from the prd theme on the example store.
+
+### Behavior
+- Resolves `<site-key|group>`:
+  - If `<site-key>`, resolves to a single site
+  - If `<group>`, resolves to all sites in that group
+
+- Resolves environment:
+  - Uses `[<env>]` if provided
+  - Otherwise defaults to `dev`
+
+- For each resolved site:
+  - Determines the target theme from `shopify.theme.toml`
+  - Executes `.json` only download via Shopify CLI
+  - Routes downloaded `.json` to `sites/<site_dir>`
+
+## dev
+
+Upload theme files to Shopify on file change
+
+### Usage
+
+```bash
+yarn dev <site-key|group> [<env>]
+```
+
+### Arguments
+- `<site-key>`: Targets a single site
+- `<group>`: Targets all sites within the group
+- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
+
+### Example
+```bash
+yarn dev test stg
+```
+Starts development on the stg theme on the test store.
+
+```bash
+yarn dev example dev
+```
+Starts development on the dev theme on the example store.
+
+### Behavior
+- Resolves `<site-key|group>`:
+  - If `<site-key>`, resolves to a single site
+  - If `<group>`, resolves to all sites in that group
+
+- Resolves environment:
+  - Uses `[<env>]` if provided
+  - Otherwise defaults to `dev`
+
+- For each resolved site:
+  - Determines the target theme from `shopify.theme.toml`
+  - Starts a development session via Shopify CLI
+  - On file save:
+    - Resolves the modified file using precedence:
+      - Files from `sites/<site_dir>` override files from `sites/_shared`
+    - Uploads only the modified file via Shopify CLI
+
+## copy
+
+Copy JSON & other theme files between site directories
+
+### Usage
+
+```bash
+yarn copy <source> <target> [options]
+```
+
+### Arguments
+- `<source>`: A site-key to copy files from.
+- `<target>`: A site-key or group to copy files to.
+
+### Flags / Options
+- --ovr: Overwrite copied files
+- --include-all: Copy all site files, not only JSON
+By default, only JSON files are copied and existing files are not overwritten.
+
+### Example
+```bash
+yarn copy test example
+```
+Copies JSON files from `test` to `example`.
+
+```bash
+yarn copy test example --ovr
+```
+Copies JSON files from `test` to `example`, overwriting existing files.
+
+```bash
+yarn copy example all --include-all
+```
+Copies all files from `example` to every site in the `all` group.
+
+# Recommended Branching Strategy
+It is recommended that each environment is associated with 2 corresponding branches:
+  - A primary branch for normal development (Ex: `prd` => `main`)
+  - A secondary branch to track and remain synced with the environment's Shopify theme (Ex: `prd` => `production_settings`)
+
+The secondary branch should track the Shopify theme by periodically running `yarn pull all <env>` and should not receive direct code changes.
+
+This workflow preserves changes made directly in Shopify themes and allows them to be reviewed and merged using normal Git workflows.
+
+## Example Deployment
+### 1. Sync changes from the Production Theme
+```bash
+git checkout production_settings
+yarn pullj all prd
+git commit -m "prd settings YYYY-MM-DD"
+```
+Changes made directly in the Production theme can now be reviewed, diffed, and merged like normal Git commits.
+
+### 2. Merge code changes into the tracking branch
+```bash
+git merge main
+```
+### 3. Deploy to Production
+```bash
+yarn push all prd
+```
+### 4. Merge theme changes back into the primary branch
+```bash
+git checkout main
+git merge production_settings
+```
+
+# Extending
+
+Projects may need additional environments or custom groups. This section covers common ways to extend the configuration and workflows to meet those needs.
+
+## New Site
+
+New sites can be added by using the [new-site command](#new-site)
+
+## New Env
+
+New environments can be added per site by adding an environment block in the `shopify.theme.toml` file:
+
+```toml
+[environments.<site-key>_<your-new-env>]
+theme = "<new-theme-id>"
+store-password = ""
+store = "<shopify-store-url>"
+path = "./deploy/<site-directory>"
+output = "json"
+force = true
+port = 9292
+```
+Once added, the environment can be targeted like any other environment for that site
+
+```bash
+yarn push <site-key> <your-new-env>
+```
+
+## Default Envs
+
+The `envs` variable in `scripts/utils.js` may be edited to add default environments
+
+<ul>Example</ul>
+
+```js
+const envs = [
+  "dev",
+  "stg",
+  "prd",
+  "new_env"
+];
+```
+
+Now the [new-site command](#new-site) will generate an environment block for `new_env` in `shopify.theme.template.toml`
+
+## New Group
+
+The `groups` variable in `scripts/utils.js` may be edited to add groups
+
+```js
+const groups = {
+  "all": sites,
+  // Format:
+  // "<group-name>": ["<site-key>", ...]
+}
+```
+
+Any group containing valid site keys may be used for any command argument that accepts groups
+
+## Custom Commands (Advanced)
+
+Most projects will not need to add new commands. Existing Shopify commands are defined in `package.json` & `tasks.js` and may be extended for project-specific workflows.
+
+## Example Extension: Seasonal Promotion Theme
+
+The project has a set of 4 stores: 
+- One Fish
+- Two Fish
+- Red Fish
+- Blue Fish
+
+A subset of stores need a temporary theme for an upcoming "International Colors Day" promotion. The client will load content into these themes, which will be deployed to production when the promotion begins.
+
+### Set up new Configuration:
+1. Create a new environment for each participating site. In this example, only Red Fish and Blue Fish participate in the promotion.
+
+```toml
+################################################
+###### Red Fish Configurations
+################################################
+
+...
+
+[environments.red_holi]
+
+...
+
+################################################
+###### Blue Fish Configurations
+################################################
+
+[environments.blue_holi]
+
+...
+
+```
+
+2. Create a group containing the participating sites:
+
+```js
+const groups = {
+  all: sites,
+  holi: ["red", "blue"],
+};
+```
+
+The group `holi` now safely targets only the stores that have the promotion theme.
+
+3. Create a branch to track the holiday theme: `holiday_settings`
+
+4. When the promotion is ready, pull the `.json` files from the holiday themes on the `holiday_settings` branch:
+
+```bash
+git checkout holiday_settings
+yarn pullj holi holi
+```
+
+5. Merge the `holiday_settings` branch with your `main` branch
+
+6. Deploy the promotion to the production themes of all participating stores:
+
+```bash
+yarn push holi prd
+```

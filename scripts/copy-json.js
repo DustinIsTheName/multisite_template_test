@@ -15,7 +15,7 @@ if (!sourceSite || !targetSite) {
 }
 
 if (sourceSite === targetSite) {
-  error(`Cannot propagate "${sourceSite}" to itself!`);
+  error(`Cannot copy "${sourceSite}" to itself!`);
   process.exit(1);
 }
 
@@ -26,7 +26,7 @@ if (!validateSite(sourceSite, { groupAllowed: false }) || !validateSite(targetSi
 
 // Warn when using potentially destructive flags
 if (overwrite || allowNonJson) {
-  const answer = await prompt(`CAUTION! propagate from "${sourceSite}" to "${targetSite}" with flags:${overwrite ? ' --ovr (overwrite)':''}${allowNonJson ? ' --include-all':''}. Continue? (y/n): `);
+  const answer = await prompt(`CAUTION! copy from "${sourceSite}" to "${targetSite}" with flags:${overwrite ? ' --ovr (overwrite)':''}${allowNonJson ? ' --include-all':''}. Continue? (y/n): `);
 
   if (answer !== "y") {
     process.exit(0);
@@ -41,7 +41,7 @@ function ensureDirectoryExists(dirPath) {
 }
 
 // simplifed version of copyDirectory from scripts/copy-entire-theme.js
-function propJSON(source, destination) {
+function copyJSON(source, destination) {
   log(`Copying from ${source} to ${destination}...`);
   try {
     // Ensure destination directory exists
@@ -58,7 +58,7 @@ function propJSON(source, destination) {
 
       if (stats.isDirectory()) {
         // Recursively copy directory
-        propJSON(sourcePath, destPath);
+        copyJSON(sourcePath, destPath);
       } else {
         // skip ALL non-json, unless --include-all flag is presant
         if (item.indexOf('.json') === -1 && !allowNonJson) continue;
@@ -82,10 +82,10 @@ const sourceDir = themeMap[sourceSite];
 if (groups[targetSite]) {
   groups[targetSite].forEach((site) => {
     const targetDir = themeMap[site];
-    propJSON(sourceDir, targetDir);
+    copyJSON(sourceDir, targetDir);
   });
 // propagate from source to single site otherwise
 } else {
   const targetDir = themeMap[targetSite];
-  propJSON(sourceDir, targetDir);
+  copyJSON(sourceDir, targetDir);
 }

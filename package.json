@@ -1,18 +1,17 @@
 {
-  "name": "shopify-propel",
+  "name": "shopify-multisite",
   "version": "2.0.0",
-  "description": "Section > Block based architecture to be layered on existing themes.",
+  "description": "Architecture, workflow, deployments, and branching strategy for multiple stores using one code repository.",
   "author": "CQL Corp",
   "private": true,
   "type": "module",
   "scripts": {
-    "task": "node scripts/task.js",
     "push": "node scripts/task.js push",
     "pull": "node scripts/task.js pull",
     "dev": "node scripts/task.js dev",
     "pushj": "node scripts/task.js pushj",
     "pullj": "node scripts/task.js pullj",
-    "prop": "node scripts/propagate-json.js",
+    "copy": "node scripts/copy-json.js",
     "new-site": "node scripts/new-site.js"
   },
   "devDependencies": {
