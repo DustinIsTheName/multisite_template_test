@@ -123,7 +123,7 @@ The file is divided into environment blocks, each representing a site and enviro
 
 Each environment follows the naming convention: 
 
-`[environments.\<site-key\>_\<env\>]`
+`[environments.<site-key>_<env>]`
 
 #### <u>Fields</u>
 - `theme = "<TBD>"`<br>
