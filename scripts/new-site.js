@@ -55,7 +55,6 @@ const toml = fs.existsSync(tomlPath) ? fs.readFileSync(tomlPath, "utf8") : "";
 // can be adjusted or extened as needed
 // "prd" has slightly extra behavior in task.js
 // "dev" is assumed as the default when running scripts with calling env out
-log(`Add new shopify environments for${envs.map(env => ` ${site_key}_${env}`)}`);
 
 // scour the toml file for all the existing ports (ex: "port = 9292")
 const ports = [
@@ -92,5 +91,5 @@ const header = `
 
 const output = header + blocks + "\n";
 fs.appendFileSync(tomlPath, output);
-log(`Added new shopify environments for ${envs.map(env => `${site_key}_${env}`)}`);
+log(`Added new shopify environments for ${envs.map(env => ` ${site_key}_${env}`)}`);
 final(`New site established. Be sure to fill in the toml template and copy it into your toml proper.`);
