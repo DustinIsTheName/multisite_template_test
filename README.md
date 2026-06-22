@@ -1,6 +1,6 @@
 # CQL Shopify Multi-site setup
 
-This template is for setting up an environment to support multiple Shopify stores sharing one repo. It is made with a focus on the stores sharing code and only differing in regards to the theme customizer (.json files in the repo), but is intended to be flexable and extendable for your needs.
+This template is for setting up an environment to support multiple Shopify stores sharing one repo. It is made with a focus on the stores sharing code and only differing within the theme customizer (.json files in the repo), but is intended to be flexible and extendable for your needs.
 
 # Table of Contents
 
@@ -23,7 +23,6 @@ This template is for setting up an environment to support multiple Shopify store
 ## Tooling
 
 - Git
-- Github
 - Node 24.x
 - Yarn (or npm)
 - [Shopify CLI](https://shopify.dev/docs/api/shopify-cli)
@@ -65,8 +64,8 @@ This gets you up and running for one Shopify Store
 
 - **Sites** represent individual storefronts.
 - **Environments** represent deployment targets for a site.
-    - This template starts with 3 pre-configured envrionments:
-        - Productuction (prd)
+    - This template starts with 3 pre-configured environments:
+        - Production (prd)
         - Staging (stg)
         - Development (dev)
 - **Groups** are named collections of sites.
@@ -195,7 +194,7 @@ yarn push <site-key|group> [<env>]
 ### Arguments
 - `<site-key>`: Targets a single site
 - `<group>`: Targets all sites within the group
-- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
+- `<env>`: Targeted environment/theme. If omitted defaults to `dev`
 
 ### Example
 ```bash
@@ -237,7 +236,7 @@ yarn pull <site-key|group> [<env>]
 ### Arguments
 - `<site-key>`: Targets a single site
 - `<group>`: Targets all sites within the group
-- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
+- `<env>`: Targeted environment/theme. If omitted defaults to `dev`
 
 ### Example
 ```bash
@@ -280,7 +279,7 @@ yarn pushj <site-key|group> [<env>]
 ### Arguments
 - `<site-key>`: Targets a single site
 - `<group>`: Targets all sites within the group
-- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
+- `<env>`: Targeted environment/theme. If omitted defaults to `dev`
 
 ### Example
 ```bash
@@ -320,7 +319,7 @@ yarn pullj <site-key|group> [<env>]
 ### Arguments
 - `<site-key>`: Targets a single site
 - `<group>`: Targets all sites within the group
-- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
+- `<env>`: Targeted environment/theme. If omitted defaults to `dev`
 
 ### Example
 ```bash
@@ -360,7 +359,7 @@ yarn dev <site-key|group> [<env>]
 ### Arguments
 - `<site-key>`: Targets a single site
 - `<group>`: Targets all sites within the group
-- `<env>`: Targeted envrionment/theme. If ommited defaults to `dev`
+- `<env>`: Targeted environment/theme. If omitted defaults to `dev`
 
 ### Example
 ```bash
